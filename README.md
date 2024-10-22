@@ -6,3 +6,18 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+  const users = JSON.parse(localStorage.getItem('users') || '[]');
+
+  const newUser = {
+  title: product.attributes.title,
+  image: product.attributes.image,
+  company: product.attributes.company,
+  price: product.attributes.price,
+  color: color,
+  soni: amount,
+  };
+
+  users.push(newUser);
+
+  localStorage.setItem('users', JSON.stringify(users));
