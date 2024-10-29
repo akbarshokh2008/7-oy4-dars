@@ -5,7 +5,7 @@ import http from '../axios';
 
 export default function Cart() {
   const [cart, setCart] = useContext(CartContext);
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token] = useState(localStorage.getItem('token'));
   console.log(cart);
   const nameRef = useRef();
   const addressRef = useRef();
@@ -76,7 +76,7 @@ export default function Cart() {
   return (
     <div className='cart text-[#394E6A] dark:text-white my-container'>
       <h2 className='text-3xl font-bold pb-6 pt-20 border-b border-gray-600 dark:border-black dark:text-white'>
-        Shopping Cart
+        Your Cart Is Empty
       </h2>
 
       {cart.length > 0 && (

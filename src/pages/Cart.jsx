@@ -110,38 +110,39 @@ export default function Cart() {
               );
             })}
         </div>
-
-        <div className='hisobot'>
-          <div className=' w-[295px] bg-slate-200 dark:bg-[#181920] dark:text-white rounded-2xl h-[255px] p-6'>
-            <div className='flex justify-between mb-4 border-b pb-3 border-gray-600'>
-              <p className='text-lg'>Subtotal</p>
-              <p className='text-xl font-bold'>
-                ${(subTotal() / 100).toFixed(2)}
-              </p>
+        {cart.length > 0 && (
+          <div className='hisobot'>
+            <div className=' w-[295px] bg-slate-200 dark:bg-[#181920] dark:text-white rounded-2xl h-[255px] p-6'>
+              <div className='flex justify-between mb-4 border-b pb-3 border-gray-600'>
+                <p className='text-lg'>Subtotal</p>
+                <p className='text-xl font-bold'>
+                  ${(subTotal() / 100).toFixed(2)}
+                </p>
+              </div>
+            </div>
+            <div className='w-[295px]'>
+              {localStorage.getItem('token') ? (
+                <button
+                  onClick={() => {
+                    navigate('/checkout');
+                  }}
+                  className='w-full py-3 rounded-lg bg-pink-400 text-[#301C27] dark:bg-blue-500 dark:text-white font-bold mt-8'
+                >
+                  PROCEED TO CHECKOUT
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    navigate('/login');
+                  }}
+                  className='w-full py-3 rounded-lg dark:bg-pink-400 dark:text-[#301C27] bg-blue-500 text-white font-bold mt-8'
+                >
+                  PLEASE LOGIN
+                </button>
+              )}
             </div>
           </div>
-          <div className='w-[295px]'>
-            {localStorage.getItem('token') ? (
-              <button
-                onClick={() => {
-                  navigate('/checkout');
-                }}
-                className='w-full py-3 rounded-lg bg-pink-400 text-[#301C27] dark:bg-blue-500 dark:text-white font-bold mt-8'
-              >
-                PROCEED TO CHECKOUT
-              </button>
-            ) : (
-              <button
-                onClick={() => {
-                  navigate('/login');
-                }}
-                className='w-full py-3 rounded-lg dark:bg-pink-400 dark:text-[#301C27] bg-blue-500 text-white font-bold mt-8'
-              >
-                PLEASE LOGIN
-              </button>
-            )}
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

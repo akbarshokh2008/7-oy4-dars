@@ -80,6 +80,7 @@ export default function Header() {
             >
               Cart
             </NavLink>
+
             {localStorage.getItem('token') && (
               <NavLink
                 to='/checkout'
@@ -88,6 +89,7 @@ export default function Header() {
                 Checkout
               </NavLink>
             )}
+
             {localStorage.getItem('token') && (
               <NavLink
                 to='/orders'

@@ -8,6 +8,60 @@ export default function Products() {
   const [category, setCategory] = useState([]);
   const [company, setCompany] = useState([]);
   const [price, setPrice] = useState(100000);
+  const [page, setPage] = useState(1);
+  const [pageSoni, setPageCount] = useState(null);
+  const changRef = useRef();
+
+  const Pagination = ({ pageSoni, page, onPageChange }) => {
+    return (
+      <div className='flex justify-end items-center  py-4 '>
+        <div className='inline-block dark:bg-[#181920] bg-[#F0F6FF] py-2 rounded-md'>
+          <button
+            className={`px-3 py-1 rounded-md ${
+              page === 1 ? 'text-gray-500' : 'text-white'
+            }`}
+            onClick={() => onPageChange(page - 1)}
+            disabled={page === 1}
+          >
+            PREV
+          </button>
+          {[...Array(pageSoni).keys()].map((_, index) => {
+            const pageNumber = index + 1;
+            return (
+              <button
+                key={pageNumber}
+                className={`px-3 py-1 rounded-md ${
+                  page === pageNumber
+                    ? 'dark:bg-black bg-[#d4dff5] dark:text-white text-[#394E82]'
+                    : 'text-[#394E82] dark:text-white'
+                }`}
+                onClick={() => onPageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            );
+          })}
+          <button
+            className={`px-3 py-1 rounded-md ${
+              page === pageSoni
+                ? 'text-[#394E82] dark:text-gray-500'
+                : 'dark:text-white  text-[#394E82]'
+            }`}
+            onClick={() => onPageChange(page + 1)}
+            disabled={page === pageSoni}
+          >
+            NEXT
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage > 0 && newPage <= pageSoni) {
+      setPage(newPage);
+    }
+  };
 
   const searchRef = useRef('');
   const categoryRef = useRef('');
@@ -15,22 +69,24 @@ export default function Products() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [page]);
 
   const fetchProducts = () => {
     const search = searchRef.current;
     const category = categoryRef.current;
     const company = companyRef.current;
+    const shipping = changRef.current.checked ? '&shipping=on' : '';
 
     http
       .get(
-        `products?search=${search}&category=${category}&company=${company}&order=a-z&price=${price}`
+        `products?page=${page}&search=${search}&category=${category}&company=${company}&order=a-z&price=${price}${shipping}`
       )
       .then(
         (data) => (
-          console.log(data.data.data),
+          console.log(data.data.meta),
           setProducts(data.data.data),
           setTotal(data.data.meta.pagination.total),
+          setPageCount(data.data.meta.pagination.pageCount),
           setCategory(data.data.meta.categories),
           setCompany(data.data.meta.companies)
         )
@@ -48,6 +104,9 @@ export default function Products() {
     fetchProducts();
   }
 
+  const handlePriceChange = (e) => {
+    setPrice(e.target.value);
+  };
   return (
     <div className='my-container text-[#394E6A] pt-20'>
       <form
@@ -67,12 +126,15 @@ export default function Products() {
           <div className='flex flex-col gap-2'>
             <div className='price flex justify-between pl-2'>
               <p>Select Price</p>
-              <span>$1.000.00</span>
+              <span>${(price / 100).toFixed(2)}</span>
             </div>
             <input
               type='range'
               min={0}
               max='100000'
+              step={1000}
+              value={price}
+              onChange={handlePriceChange} // Qo'shilgan handlePriceChange
               className='range range-info dark:range-secondary'
             />
             <div className='maxprice flex justify-between pl-2'>
@@ -105,6 +167,7 @@ export default function Products() {
               type='checkbox'
               name='shipping'
               className='checkbox checkbox-primary checkbox-sm'
+              ref={changRef}
             />
           </div>
         </div>
@@ -147,11 +210,47 @@ export default function Products() {
             RESET
           </button>
         </div>
-        {/* <button type='submit'>Search</button> */}
       </form>
-      <div className='prodleng'>
-        <h3 className='text-xl pb-5 mt-16'>{total} products</h3>
-        <hr />
+
+      <div className='prodleng  flex mt-16 justify-between border-b-2 border-black'>
+        <h3 className='text-xl pb-5 dark:text-white'>{total} products</h3>
+        <div className='but flex gap-3'>
+          <button
+            type='button'
+            class='text-xl btn btn-circle btn-sm btn-primary text-primary-content'
+          >
+            <svg
+              stroke='currentColor'
+              fill='currentColor'
+              stroke-width='0'
+              viewBox='0 0 16 16'
+              height='1em'
+              width='1em'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path d='M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zm8 0A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm-8 8A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm8 0A1.5 1.5 0 0 1 10.5 9h3a1.5 1.5 0 0 1 1.5 1.5v3a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 13.5v-3z'></path>
+            </svg>
+          </button>
+          <button
+            type='button'
+            class='text-xl btn btn-circle btn-sm btn-ghost text-based-content'
+          >
+            <svg
+              stroke='currentColor'
+              fill='currentColor'
+              stroke-width='0'
+              viewBox='0 0 16 16'
+              height='1em'
+              width='1em'
+              xmlns='http://www.w3.org/2000/svg'
+            >
+              <path
+                fill-rule='evenodd'
+                d='M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z'
+              ></path>
+            </svg>
+          </button>
+        </div>
       </div>
 
       <div className='wrapper pt-12 flex flex-wrap justify-around gap-5 mt-12 '>
@@ -159,7 +258,7 @@ export default function Products() {
           products.map((item) => {
             return (
               <div
-                className='w-[350px] shadow-xl rounded-lg flex justify-center items-center cursor-pointer flex-col'
+                className='w-[350px]  shadow-xl rounded-lg flex justify-center items-center cursor-pointer flex-col'
                 key={item.id}
                 onClick={() => handleDetails(item.id)}
               >
@@ -169,7 +268,7 @@ export default function Products() {
                   className='w-[320px] h-[192px] rounded-lg'
                 />
                 <div className='text p-6 text-center'>
-                  <h2 className='text-xl font-bold'>
+                  <h2 className='text-xl font-bold dark:text-white'>
                     {item.attributes.title
                       .split(' ')
                       .map(
@@ -177,7 +276,7 @@ export default function Products() {
                       )
                       .join(' ')}
                   </h2>{' '}
-                  <p className='text-xl mt-3 '>
+                  <p className='text-xl mt-3 dark:text-[#BF95F9]'>
                     ${(item.attributes.price / 100).toFixed(2)}
                   </p>
                 </div>
@@ -185,6 +284,11 @@ export default function Products() {
             );
           })}
       </div>
+      <Pagination
+        pageSoni={pageSoni}
+        page={page}
+        onPageChange={handlePageChange}
+      />
     </div>
   );
 }

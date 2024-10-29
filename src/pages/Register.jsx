@@ -81,14 +81,15 @@ export default function Register() {
 
     http
       .post('auth/local/register', user)
-      .then((response) => {
-        if (response.data.jwt) {
+      .then((data) => {
+        if (data.status === 200) {
           formRef.current.reset();
           navigate('/login');
         }
+        [];
       })
       .catch((error) => {
-        alert(error.response.data.error.message);
+        alert(error.data.data.error.message);
       });
   }
 
